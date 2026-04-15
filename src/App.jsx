@@ -6,6 +6,8 @@ import Staff from './pages/Staff'
 import Billing from './pages/Billing'
 import Meals from './pages/Meals'
 import Compliance from './pages/Compliance'
+import GpsCheckin from './pages/GpsCheckin'
+import Reports from './pages/Reports'
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('')
@@ -29,7 +31,6 @@ function Login({ onLogin }) {
           <h1 style={{fontSize:'28px', fontWeight:'800', color:'#1e293b', letterSpacing:'-0.5px'}}>BrightPath</h1>
           <p style={{color:'#64748b', fontSize:'14px', marginTop:'6px'}}>Childcare Management Platform</p>
         </div>
-
         <form onSubmit={handleSubmit}>
           <div style={{marginBottom:'16px'}}>
             <label style={{display:'block', fontSize:'13px', fontWeight:'600', color:'#374151', marginBottom:'6px'}}>Email</label>
@@ -77,6 +78,17 @@ function Login({ onLogin }) {
   )
 }
 
+const NAV_ITEMS = [
+  { to: '/',           label: 'Dashboard',    icon: '📊' },
+  { to: '/gps',        label: 'GPS Check-in', icon: '📍', badge: null, highlight: true },
+  { to: '/children',   label: 'Children',     icon: '👶' },
+  { to: '/staff',      label: 'Staff',        icon: '👩‍🏫' },
+  { to: '/billing',    label: 'Billing',      icon: '💰', badge: 2 },
+  { to: '/meals',      label: 'Meals',        icon: '🥗' },
+  { to: '/compliance', label: 'Compliance',   icon: '✅', badge: 3 },
+  { to: '/reports',    label: 'Reports',      icon: '📋' },
+]
+
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false)
 
@@ -87,12 +99,38 @@ export default function App() {
       <div className="layout">
         <nav className="sidebar">
           <h1>🌟 BrightPath</h1>
-          <NavLink to="/">Dashboard</NavLink>
-          <NavLink to="/children">Children</NavLink>
-          <NavLink to="/staff">Staff</NavLink>
-          <NavLink to="/billing">Billing</NavLink>
-          <NavLink to="/meals">Meals</NavLink>
-          <NavLink to="/compliance">Compliance</NavLink>
+
+          {NAV_ITEMS.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === '/'}
+              style={({ isActive }) => ({
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: item.highlight && !isActive ? 'rgba(255,255,255,0.12)' : undefined,
+                borderRadius: item.highlight ? '8px' : undefined,
+              })}
+            >
+              <span>{item.icon} {item.label}</span>
+              {item.badge && (
+                <span style={{
+                  background: '#ef4444',
+                  color: 'white',
+                  borderRadius: '999px',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  padding: '2px 7px',
+                  minWidth: '18px',
+                  textAlign: 'center',
+                }}>
+                  {item.badge}
+                </span>
+              )}
+            </NavLink>
+          ))}
+
           <div style={{marginTop:'auto', paddingTop:'20px', borderTop:'1px solid rgba(255,255,255,0.2)'}}>
             <button
               onClick={() => setLoggedIn(false)}
@@ -102,14 +140,17 @@ export default function App() {
             </button>
           </div>
         </nav>
+
         <main className="main">
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/children" element={<Children />} />
-            <Route path="/staff" element={<Staff />} />
-            <Route path="/billing" element={<Billing />} />
-            <Route path="/meals" element={<Meals />} />
+            <Route path="/"           element={<Dashboard />} />
+            <Route path="/gps"        element={<GpsCheckin />} />
+            <Route path="/children"   element={<Children />} />
+            <Route path="/staff"      element={<Staff />} />
+            <Route path="/billing"    element={<Billing />} />
+            <Route path="/meals"      element={<Meals />} />
             <Route path="/compliance" element={<Compliance />} />
+            <Route path="/reports"    element={<Reports />} />
           </Routes>
         </main>
       </div>
