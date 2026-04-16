@@ -110,7 +110,7 @@ function Sidebar({ dark, setDark, mobileOpen, setMobileOpen }) {
             onClick={() => setDark(!dark)}
             style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, border: 'none', background: dark ? '#312e81' : '#f8fafc', cursor: 'pointer', marginBottom: 8 }}
           >
-            <span style={{ fontSize: 18 }}>{dark ? '☀️' : '🌙'}|/span>
+            <span style={{ fontSize: 18 }}>{dark ? '☀️' : '🌙'}</span>
             <span style={{ fontSize: 14, color: text, fontWeight: 500 }}>{dark ? 'Light Mode' : 'Dark Mode'}</span>
             <div style={{ marginLeft: 'auto', width: 36, height: 20, background: dark ? '#4f46e5' : '#e2e8f0', borderRadius: 10, position: 'relative', transition: 'background .2s' }}>
               <div style={{ width: 16, height: 16, background: '#fff', borderRadius: '50%', position: 'absolute', top: 2, left: dark ? 18 : 2, transition: 'left .2s', boxShadow: '0 1px 3px rgba(0,0,0,.2)' }} />
