@@ -8,6 +8,7 @@ import Billing from './pages/Billing'
 import Meals from './pages/Meals'
 import Compliance from './pages/Compliance'
 import Reports from './pages/Reports'
+import SignIn from './pages/SignIn'
 
 const NAV_ITEMS = [
   { to: '/',           label: 'Dashboard',    icon: 'dashboard' },
@@ -31,7 +32,7 @@ const ICONS = {
   reports:    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>,
 }
 
-function Sidebar({ dark, setDark, mobileOpen, setMobileOpen }) {
+function Sidebar({ dark, setDark, mobileOpen, setMobileOpen, user, onSignOut }) {
   const location = useLocation()
 
   const bg = dark ? '#1e1b4b' : '#fff'
@@ -40,10 +41,10 @@ function Sidebar({ dark, setDark, mobileOpen, setMobileOpen }) {
   const activeText = dark ? '#a5b4fc' : '#4f46e5'
   const border = dark ? '#312e81' : '#f1f5f9'
   const logoText = dark ? '#a5b4fc' : '#4f46e5'
+  const initial = (user?.email || 'U')[0].toUpperCase()
 
   return (
     <>
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen(false)}
@@ -105,7 +106,6 @@ function Sidebar({ dark, setDark, mobileOpen, setMobileOpen }) {
 
         {/* Bottom: dark mode + profile */}
         <div style={{ padding: '12px 10px', borderTop: `1px solid ${border}` }}>
-          {/* Dark mode toggle */}
           <button
             onClick={() => setDark(!dark)}
             style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, border: 'none', background: dark ? '#312e81' : '#f8fafc', cursor: 'pointer', marginBottom: 8 }}
@@ -116,13 +116,19 @@ function Sidebar({ dark, setDark, mobileOpen, setMobileOpen }) {
               <div style={{ width: 16, height: 16, background: '#fff', borderRadius: '50%', position: 'absolute', top: 2, left: dark ? 18 : 2, transition: 'left .2s', boxShadow: '0 1px 3px rgba(0,0,0,.2)' }} />
             </div>
           </button>
-          {/* Profile */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, background: dark ? '#312e81' : '#f8fafc' }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#4f46e5,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 13 }}>T</div>
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: dark ? '#e0e7ff' : '#0f172a' }}>Tom Lindqvist</div>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#4f46e5,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 13 }}>{initial}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: dark ? '#e0e7ff' : '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email || 'User'}</div>
               <div style={{ fontSize: 11, color: text }}>Director</div>
             </div>
+            <button
+              onClick={onSignOut}
+              title="Sign out"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: text, padding: 2, display: 'flex', alignItems: 'center' }}
+            >
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
           </div>
         </div>
       </nav>
@@ -130,7 +136,7 @@ function Sidebar({ dark, setDark, mobileOpen, setMobileOpen }) {
   )
 }
 
-function Layout({ children, dark, setDark }) {
+function Layout({ children, dark, setDark, user, onSignOut }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const mainBg = dark ? '#0f0e2e' : '#f8fafc'
   const headerBg = dark ? '#1e1b4b' : '#fff'
@@ -138,7 +144,6 @@ function Layout({ children, dark, setDark }) {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: mainBg }}>
-      {/* Mobile hamburger header */}
       <div style={{ display: 'none', position: 'fixed', top: 0, left: 0, right: 0, height: 56, background: headerBg, borderBottom: `1px solid ${headerBorder}`, alignItems: 'center', padding: '0 16px', zIndex: 30 }}>
         <button onClick={() => setMobileOpen(!mobileOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22 }}>
           {mobileOpen ? '✕' : '☰'}
@@ -146,7 +151,7 @@ function Layout({ children, dark, setDark }) {
         <span style={{ marginLeft: 12, fontWeight: 700, color: '#4f46e5' }}>BrightPath</span>
       </div>
 
-      <Sidebar dark={dark} setDark={setDark} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+      <Sidebar dark={dark} setDark={setDark} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} user={user} onSignOut={onSignOut} />
       <main style={{ flex: 1, overflowY: 'auto', transition: 'background .2s' }}>
         {children}
       </main>
@@ -156,10 +161,15 @@ function Layout({ children, dark, setDark }) {
 
 export default function App() {
   const [dark, setDark] = useState(false)
+  const [user, setUser] = useState(null)
+
+  if (!user) {
+    return <SignIn onSignIn={setUser} dark={dark} />
+  }
 
   return (
     <BrowserRouter>
-      <Layout dark={dark} setDark={setDark}>
+      <Layout dark={dark} setDark={setDark} user={user} onSignOut={() => setUser(null)}>
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/gps" element={<GpsCheckin />} />
