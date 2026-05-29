@@ -33,6 +33,29 @@ export default function Billing() {
   const [filter, setFilter] = useState('All')
   const [markingId, setMarkingId] = useState(null)
 
+  function exportCSV() {
+    const headers = ['Invoice', 'Child', 'Guardian', 'Program', 'Amount', 'Due Date', 'Status', 'Paid Date', 'Method']
+    const rows = invoices.map(inv => [
+      inv.id,
+      inv.child,
+      inv.guardian,
+      inv.program,
+      inv.amount,
+      inv.due,
+      inv.status,
+      inv.paid || '',
+      inv.method || '',
+    ])
+    const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'brightpath-invoices.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const totalCollected = invoices.filter(i => i.status === 'Paid').reduce((a, b) => a + b.amount, 0)
   const totalPending = invoices.filter(i => i.status === 'Pending').reduce((a, b) => a + b.amount, 0)
   const totalOverdue = invoices.filter(i => i.status === 'Overdue').reduce((a, b) => a + b.amount, 0)
@@ -58,7 +81,7 @@ export default function Billing() {
           <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 14 }}>Invoices, payments & revenue tracking</p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <button style={{ background: '#fff', color: '#475569', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 16px', fontWeight: 500, cursor: 'pointer', fontSize: 14 }}>
+          <button onClick={exportCSV} style={{ background: '#fff', color: '#475569', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 16px', fontWeight: 500, cursor: 'pointer', fontSize: 14 }}>
             Export CSV
           </button>
           <button style={{ background: '#4f46e5', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 18px', fontWeight: 600, cursor: 'pointer', fontSize: 14 }}>
