@@ -77,24 +77,33 @@ stable URL.
    `tiktok-ads-mcp`, `google-ads-mcp`, `pinterest-ads-mcp`.
 2. For each service, open it in the dashboard and fill in its credential env
    vars (they're declared but left blank for you to set securely).
-3. `MCP_AUTH_TOKEN` is **auto-generated** per service — copy its value from the
-   dashboard; you'll paste it into Claude's connector as `Bearer <value>`.
-4. Each service's connector link is `https://<service-name>.onrender.com/mcp`
+3. Each service's connector link is `https://<service-name>.onrender.com/mcp`
    (e.g. `https://tiktok-ads-mcp.onrender.com/mcp`).
 
 **Any other host (Railway, Fly.io, a VPS):** each server folder has a
-`Dockerfile`. Point the host at the folder, set the platform env vars +
-`MCP_AUTH_TOKEN`, and deploy. The host provides `PORT` automatically. Your link
-is `https://your-app.example.com/mcp`.
+`Dockerfile`. Point the host at the folder, set the platform env vars, and
+deploy. The host provides `PORT` automatically. Your link is
+`https://your-app.example.com/mcp`.
 
 #### Add the link in Claude
 In Claude (web/Chrome): **Settings → Connectors → Add custom connector**, paste
 the `…/mcp` URL, and connect. Repeat for each platform's URL.
 
-> 🔒 **Protect public endpoints.** Anyone with the URL could spend your ad
-> budget. Set `MCP_AUTH_TOKEN` to a long random string before exposing a server;
-> the endpoint then requires `Authorization: Bearer <token>`. Add that header in
-> the connector's settings. Prefer tunnels/links that aren't shared publicly.
+#### Won't connect? ("Couldn't connect to the server")
+1. **Open `https://<service>.onrender.com/health` in a browser.** It should show
+   `{"status":"ok"}`. On Render's free plan the service sleeps when idle and
+   takes ~50s to wake — wait for it to respond, *then* click Connect in Claude.
+2. If `/health` doesn't load at all, the service isn't deployed or its build
+   failed — check the deploy logs in the Render dashboard.
+3. If `/health` works but Claude still fails, make sure **`MCP_AUTH_TOKEN` is
+   blank** (Dashboard → service → Environment). The basic connector flow can't
+   send an auth header, so a token set here will reject Claude. Remove it and
+   let the service redeploy.
+
+> 🔒 **Security trade-off.** A blank `MCP_AUTH_TOKEN` means the URL is
+> unauthenticated — anyone who has it can spend your ad budget. Keep the URL
+> private. Only set a token if you use a client that can send
+> `Authorization: Bearer <token>`.
 
 ---
 

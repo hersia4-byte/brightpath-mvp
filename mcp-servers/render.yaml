@@ -5,9 +5,12 @@
 #   1. Push this repo to GitHub (already done on your branch).
 #   2. In Render: New > Blueprint, pick this repo, and Render reads this file.
 #   3. After deploy, set each service's credential env vars (marked sync:false)
-#      in the Render dashboard. MCP_AUTH_TOKEN is auto-generated — copy its value
-#      from the dashboard into your Claude connector's Authorization header
-#      as:  Bearer <value>
+#      in the Render dashboard.
+#
+# Auth: MCP_AUTH_TOKEN is intentionally left blank so the endpoint connects with
+# Claude's basic "Add custom connector" flow. Leaving it blank means the URL is
+# UNAUTHENTICATED — keep it private. Only set a value if your client can send an
+# "Authorization: Bearer <value>" header.
 #
 # Each service's connector URL is:  https://<service>.onrender.com/mcp
 
@@ -22,8 +25,13 @@ services:
     healthCheckPath: /health
     autoDeploy: true
     envVars:
+      # Left blank so the endpoint connects out of the box with Claude's basic
+      # "Add custom connector" flow (which doesn't send a custom auth header).
+      # SECURITY: an unauthenticated endpoint lets anyone with the URL control
+      # your ad spend. Keep the URL private. To lock it down, set a value here
+      # AND use a client that can send "Authorization: Bearer <value>".
       - key: MCP_AUTH_TOKEN
-        generateValue: true
+        sync: false
       - key: TIKTOK_ACCESS_TOKEN
         sync: false
       - key: TIKTOK_ADVERTISER_ID
@@ -39,8 +47,13 @@ services:
     healthCheckPath: /health
     autoDeploy: true
     envVars:
+      # Left blank so the endpoint connects out of the box with Claude's basic
+      # "Add custom connector" flow (which doesn't send a custom auth header).
+      # SECURITY: an unauthenticated endpoint lets anyone with the URL control
+      # your ad spend. Keep the URL private. To lock it down, set a value here
+      # AND use a client that can send "Authorization: Bearer <value>".
       - key: MCP_AUTH_TOKEN
-        generateValue: true
+        sync: false
       - key: GOOGLE_ADS_DEVELOPER_TOKEN
         sync: false
       - key: GOOGLE_ADS_REFRESH_TOKEN
@@ -64,8 +77,13 @@ services:
     healthCheckPath: /health
     autoDeploy: true
     envVars:
+      # Left blank so the endpoint connects out of the box with Claude's basic
+      # "Add custom connector" flow (which doesn't send a custom auth header).
+      # SECURITY: an unauthenticated endpoint lets anyone with the URL control
+      # your ad spend. Keep the URL private. To lock it down, set a value here
+      # AND use a client that can send "Authorization: Bearer <value>".
       - key: MCP_AUTH_TOKEN
-        generateValue: true
+        sync: false
       - key: PINTEREST_ACCESS_TOKEN
         sync: false
       - key: PINTEREST_AD_ACCOUNT_ID
