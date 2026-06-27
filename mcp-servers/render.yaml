@@ -100,3 +100,26 @@ services:
         sync: false
       - key: PINTEREST_AD_ACCOUNT_ID
         sync: false
+
+  # Second Pinterest server — for the Tech Viral brand (separate Pinterest
+  # login, so it needs its own app/token and therefore its own connector).
+  - type: web
+    name: pinterest-ads-mcp-techviral
+    runtime: node
+    rootDir: mcp-servers/pinterest-ads-mcp
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm run start:http
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: MCP_AUTH_TOKEN
+        sync: false
+      - key: PINTEREST_APP_ID
+        sync: false
+      - key: PINTEREST_APP_SECRET
+        sync: false
+      - key: PINTEREST_ACCESS_TOKEN
+        sync: false
+      - key: PINTEREST_AD_ACCOUNT_ID
+        sync: false
