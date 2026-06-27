@@ -3,8 +3,13 @@
 Standalone MCP server to manage TikTok ad campaigns and creatives from Claude.
 
 **Tools:** `connection_status`, `list_ad_accounts`, `list_identities`,
-`list_campaigns`, `create_campaign`, `update_campaign_status`, `create_adgroup`,
-`upload_image`, `upload_video`, `create_ad`, `get_report`.
+`list_regions`, `list_languages`, `list_interest_categories`, `list_campaigns`,
+`create_campaign`, `update_campaign_status`, `create_adgroup` (with full
+targeting: geo, age, gender, languages, interests, OS), `upload_image`,
+`upload_video`, `create_ad`, `get_report`.
+
+📋 **See [EXAMPLE.md](./EXAMPLE.md) for a full walkthrough** — campaign → ad
+group with targeting → creative upload → live ad → reporting.
 
 ## Setup
 ```bash

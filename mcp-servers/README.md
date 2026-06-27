@@ -68,9 +68,24 @@ The tunnel prints an `https://…` URL. Your connector link is that URL **+ `/mc
 `https://random-name.trycloudflare.com/mcp`.
 
 #### B2. Deploy for a permanent link
-Deploy each folder to any Node host (Render, Railway, Fly.io, a VPS, etc.) with
-start command `npm run start:http` and the platform env vars set. Your link is
-`https://your-app.example.com/mcp`.
+This repo ships deploy config so each server becomes an always-on service with a
+stable URL.
+
+**Render (easiest — one blueprint deploys all three):**
+1. In [Render](https://render.com): **New → Blueprint**, pick this repo/branch.
+   Render reads [`render.yaml`](./render.yaml) and creates three web services:
+   `tiktok-ads-mcp`, `google-ads-mcp`, `pinterest-ads-mcp`.
+2. For each service, open it in the dashboard and fill in its credential env
+   vars (they're declared but left blank for you to set securely).
+3. `MCP_AUTH_TOKEN` is **auto-generated** per service — copy its value from the
+   dashboard; you'll paste it into Claude's connector as `Bearer <value>`.
+4. Each service's connector link is `https://<service-name>.onrender.com/mcp`
+   (e.g. `https://tiktok-ads-mcp.onrender.com/mcp`).
+
+**Any other host (Railway, Fly.io, a VPS):** each server folder has a
+`Dockerfile`. Point the host at the folder, set the platform env vars +
+`MCP_AUTH_TOKEN`, and deploy. The host provides `PORT` automatically. Your link
+is `https://your-app.example.com/mcp`.
 
 #### Add the link in Claude
 In Claude (web/Chrome): **Settings → Connectors → Add custom connector**, paste

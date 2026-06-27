@@ -43,6 +43,44 @@ export function buildServer() {
   );
 
   server.registerTool(
+    "list_regions",
+    {
+      title: "TikTok: list targetable regions",
+      description: "List geo location IDs you can target. Use the returned IDs in create_adgroup's location_ids.",
+      inputSchema: {
+        advertiser_id: z.string().optional(),
+        placements: z.array(z.string()).optional().describe("e.g. [\"PLACEMENT_TIKTOK\"]."),
+        objective_type: z.string().optional(),
+      },
+    },
+    tool((a) => tiktok.listRegions({ advertiserId: a.advertiser_id, placements: a.placements, objectiveType: a.objective_type }))
+  );
+
+  server.registerTool(
+    "list_languages",
+    {
+      title: "TikTok: list targetable languages",
+      description: "List language codes you can target. Use them in create_adgroup's languages.",
+      inputSchema: { advertiser_id: z.string().optional() },
+    },
+    tool((a) => tiktok.listLanguages({ advertiserId: a.advertiser_id }))
+  );
+
+  server.registerTool(
+    "list_interest_categories",
+    {
+      title: "TikTok: list interest categories",
+      description: "List interest category IDs you can target. Use them in create_adgroup's interest_category_ids.",
+      inputSchema: {
+        advertiser_id: z.string().optional(),
+        placement: z.string().optional(),
+        version: z.number().int().optional(),
+      },
+    },
+    tool((a) => tiktok.listInterestCategories({ advertiserId: a.advertiser_id, placement: a.placement, version: a.version }))
+  );
+
+  server.registerTool(
     "list_campaigns",
     {
       title: "TikTok: list campaigns",
@@ -102,22 +140,31 @@ export function buildServer() {
       title: "TikTok: create ad group",
       description:
         "Create an ad group under a campaign. Ad groups hold targeting, budget, bidding, and schedule. " +
-        "Required fields vary by objective — use 'extra' for targeting and any objective-specific fields.",
+        "Targeting fields are optional (omit to leave unrestricted). Discover valid IDs with list_regions, " +
+        "list_languages, and list_interest_categories. Use 'extra' for any objective-specific fields " +
+        "(e.g. pixel_id, optimization_event for conversion campaigns).",
       inputSchema: {
         advertiser_id: z.string().optional(),
         campaign_id: z.string(),
         adgroup_name: z.string(),
         optimization_goal: z.string().describe("e.g. CLICK, CONVERT, REACH, VIDEO_VIEW."),
         billing_event: z.string().describe("e.g. CPC, CPM, OCPM."),
-        bid_type: z.string().optional(),
+        bid_type: z.string().optional().describe("e.g. BID_TYPE_NO_BID (lowest cost) or BID_TYPE_CUSTOM."),
+        bid_price: z.number().positive().optional().describe("Required when bid_type is BID_TYPE_CUSTOM."),
         budget_mode: z.enum(["BUDGET_MODE_DAY", "BUDGET_MODE_TOTAL"]).optional(),
         budget: z.number().positive(),
         schedule_type: z.enum(["SCHEDULE_FROM_NOW", "SCHEDULE_START_END"]).optional(),
         schedule_start_time: z.string().optional().describe("YYYY-MM-DD HH:MM:SS"),
         placement_type: z.string().optional(),
         promotion_type: z.string().optional().describe("e.g. WEBSITE, APP, LEAD_GENERATION."),
-        location_ids: z.array(z.string()).optional().describe("Geo target location IDs."),
-        extra: z.record(z.any()).optional().describe("Targeting and other ad group fields."),
+        // targeting
+        location_ids: z.array(z.string()).optional().describe("Geo target location IDs (from list_regions)."),
+        age_groups: z.array(z.string()).optional().describe('e.g. ["AGE_18_24","AGE_25_34"].'),
+        gender: z.enum(["GENDER_MALE", "GENDER_FEMALE", "GENDER_UNLIMITED"]).optional(),
+        languages: z.array(z.string()).optional().describe("Language codes (from list_languages)."),
+        interest_category_ids: z.array(z.string()).optional().describe("From list_interest_categories."),
+        operating_systems: z.array(z.string()).optional().describe('e.g. ["ANDROID","IOS"].'),
+        extra: z.record(z.any()).optional().describe("Any other ad group fields (e.g. pixel_id)."),
       },
     },
     tool((a) =>
@@ -128,6 +175,7 @@ export function buildServer() {
         optimizationGoal: a.optimization_goal,
         billingEvent: a.billing_event,
         bidType: a.bid_type,
+        bidPrice: a.bid_price,
         budgetMode: a.budget_mode,
         budget: a.budget,
         scheduleType: a.schedule_type,
@@ -135,6 +183,11 @@ export function buildServer() {
         placementType: a.placement_type,
         promotionType: a.promotion_type,
         locationIds: a.location_ids,
+        ageGroups: a.age_groups,
+        gender: a.gender,
+        languages: a.languages,
+        interestCategoryIds: a.interest_category_ids,
+        operatingSystems: a.operating_systems,
         extra: a.extra,
       })
     )

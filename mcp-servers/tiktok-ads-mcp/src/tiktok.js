@@ -53,6 +53,28 @@ export const tiktok = {
     return api("/identity/get/", { query: { advertiser_id: advId(advertiserId) } });
   },
 
+  // ---- Targeting discovery --------------------------------------------------
+  // These return the IDs you plug into create_adgroup's targeting fields.
+  async listRegions({ advertiserId, placements = ["PLACEMENT_TIKTOK"], objectiveType }) {
+    return api("/tool/region/", {
+      query: {
+        advertiser_id: advId(advertiserId),
+        placements,
+        ...(objectiveType ? { objective_type: objectiveType } : {}),
+      },
+    });
+  },
+
+  async listLanguages({ advertiserId }) {
+    return api("/tool/language/", { query: { advertiser_id: advId(advertiserId) } });
+  },
+
+  async listInterestCategories({ advertiserId, placement = "PLACEMENT_TIKTOK", version = 2 }) {
+    return api("/tool/interest_category/", {
+      query: { advertiser_id: advId(advertiserId), placement, version },
+    });
+  },
+
   // ---- Campaign -------------------------------------------------------------
   async listCampaigns({ advertiserId, page = 1, pageSize = 20 } = {}) {
     return api("/campaign/get/", {
@@ -101,7 +123,14 @@ export const tiktok = {
     scheduleStartTime,
     placementType = "PLACEMENT_TYPE_AUTOMATIC",
     promotionType,
+    bidPrice,
+    // Targeting (all optional — omit a field to leave it unrestricted):
     locationIds,
+    ageGroups,
+    gender,
+    languages,
+    interestCategoryIds,
+    operatingSystems,
     extra = {},
   }) {
     if (!campaignId) throw new Error("campaignId is required.");
@@ -118,13 +147,20 @@ export const tiktok = {
         optimization_goal: optimizationGoal,
         billing_event: billingEvent,
         bid_type: bidType,
+        ...(bidPrice !== undefined ? { bid_price: bidPrice } : {}),
         budget_mode: budgetMode,
         budget,
         schedule_type: scheduleType,
         ...(scheduleStartTime ? { schedule_start_time: scheduleStartTime } : {}),
         placement_type: placementType,
         ...(promotionType ? { promotion_type: promotionType } : {}),
+        // --- targeting ---
         ...(locationIds ? { location_ids: locationIds } : {}),
+        ...(ageGroups ? { age_groups: ageGroups } : {}),
+        ...(gender ? { gender } : {}),
+        ...(languages ? { languages } : {}),
+        ...(interestCategoryIds ? { interest_category_ids: interestCategoryIds } : {}),
+        ...(operatingSystems ? { operating_systems: operatingSystems } : {}),
         ...extra,
       },
     });

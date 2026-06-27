@@ -1,0 +1,72 @@
+# Render Blueprint — deploys all three ad MCP servers as always-on web services.
+# https://render.com/docs/blueprint-spec
+#
+# How to use:
+#   1. Push this repo to GitHub (already done on your branch).
+#   2. In Render: New > Blueprint, pick this repo, and Render reads this file.
+#   3. After deploy, set each service's credential env vars (marked sync:false)
+#      in the Render dashboard. MCP_AUTH_TOKEN is auto-generated — copy its value
+#      from the dashboard into your Claude connector's Authorization header
+#      as:  Bearer <value>
+#
+# Each service's connector URL is:  https://<service>.onrender.com/mcp
+
+services:
+  - type: web
+    name: tiktok-ads-mcp
+    runtime: node
+    rootDir: mcp-servers/tiktok-ads-mcp
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm run start:http
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: MCP_AUTH_TOKEN
+        generateValue: true
+      - key: TIKTOK_ACCESS_TOKEN
+        sync: false
+      - key: TIKTOK_ADVERTISER_ID
+        sync: false
+
+  - type: web
+    name: google-ads-mcp
+    runtime: node
+    rootDir: mcp-servers/google-ads-mcp
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm run start:http
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: MCP_AUTH_TOKEN
+        generateValue: true
+      - key: GOOGLE_ADS_DEVELOPER_TOKEN
+        sync: false
+      - key: GOOGLE_ADS_REFRESH_TOKEN
+        sync: false
+      - key: GOOGLE_ADS_CLIENT_ID
+        sync: false
+      - key: GOOGLE_ADS_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_ADS_LOGIN_CUSTOMER_ID
+        sync: false
+      - key: GOOGLE_ADS_CUSTOMER_ID
+        sync: false
+
+  - type: web
+    name: pinterest-ads-mcp
+    runtime: node
+    rootDir: mcp-servers/pinterest-ads-mcp
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm run start:http
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: MCP_AUTH_TOKEN
+        generateValue: true
+      - key: PINTEREST_ACCESS_TOKEN
+        sync: false
+      - key: PINTEREST_AD_ACCOUNT_ID
+        sync: false
