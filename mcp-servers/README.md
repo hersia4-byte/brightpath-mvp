@@ -1,0 +1,113 @@
+# Ad Platform MCP Servers
+
+Three **separate, standalone** MCP servers — one per ad platform — that let
+Claude manage your ad campaigns end to end (campaign → ad group → creative/ad →
+reporting):
+
+| Folder | Server | Default HTTP port |
+|--------|--------|-------------------|
+| [`tiktok-ads-mcp/`](./tiktok-ads-mcp) | TikTok Ads | 3001 |
+| [`google-ads-mcp/`](./google-ads-mcp) | Google Ads | 3002 |
+| [`pinterest-ads-mcp/`](./pinterest-ads-mcp) | Pinterest Ads | 3003 |
+
+Each one is independent: its own credentials, its own dependencies, its own
+URL. Run only the ones you need.
+
+> ⚠️ **These tools spend real money.** New ad groups and ads are created
+> **PAUSED** wherever the platform allows, so nothing serves until you turn it
+> on. Always review before enabling.
+
+---
+
+## What each server can do
+
+**TikTok** — list accounts/identities, list & create campaigns, create ad
+groups, upload image/video creatives, create ads, pause/resume, reporting.
+
+**Google Ads** — list accounts, list & create campaigns, create ad groups, add
+keywords, create responsive search ads, pause/resume, reporting.
+
+**Pinterest** — list accounts, list & create campaigns, create ad groups, list
+& create pins (creatives), create ads, pause/resume, reporting.
+
+---
+
+## Two ways to connect to Claude
+
+### Option A — Local (Claude Desktop / Claude Code) via a command
+Best if you run Claude on your computer. Uses the **stdio** transport — no URL,
+no hosting. See each server's own README for the exact config block.
+
+### Option B — A URL you paste into Claude (Claude in Chrome / claude.ai connectors)
+Claude's web/Chrome connectors connect to a **remote MCP server URL**. Each
+server can run in HTTP mode and expose an endpoint at `…/mcp`:
+
+```bash
+cd tiktok-ads-mcp && npm install && npm run start:http
+# -> http://localhost:3001/mcp
+```
+
+The catch: **a connector URL must be reachable by Claude over public HTTPS** —
+`localhost` only works for tools running on the same machine. So you have two
+sub-options to turn the local server into a real link:
+
+#### B1. Quick public link with a tunnel (fastest, good for testing)
+Run the server, then point a tunnel at its port:
+
+```bash
+# in one terminal
+cd tiktok-ads-mcp && npm run start:http        # listens on :3001
+
+# in another terminal (pick one tool)
+cloudflared tunnel --url http://localhost:3001
+#   or
+ngrok http 3001
+```
+
+The tunnel prints an `https://…` URL. Your connector link is that URL **+ `/mcp`**, e.g.
+`https://random-name.trycloudflare.com/mcp`.
+
+#### B2. Deploy for a permanent link
+Deploy each folder to any Node host (Render, Railway, Fly.io, a VPS, etc.) with
+start command `npm run start:http` and the platform env vars set. Your link is
+`https://your-app.example.com/mcp`.
+
+#### Add the link in Claude
+In Claude (web/Chrome): **Settings → Connectors → Add custom connector**, paste
+the `…/mcp` URL, and connect. Repeat for each platform's URL.
+
+> 🔒 **Protect public endpoints.** Anyone with the URL could spend your ad
+> budget. Set `MCP_AUTH_TOKEN` to a long random string before exposing a server;
+> the endpoint then requires `Authorization: Bearer <token>`. Add that header in
+> the connector's settings. Prefer tunnels/links that aren't shared publicly.
+
+---
+
+## Quick start (per server)
+
+```bash
+cd <platform>-ads-mcp
+npm install
+cp .env.example .env     # fill in your platform credentials
+npm run check            # confirm credentials are detected
+npm run start:http       # HTTP mode (URL)   — or `npm start` for stdio
+```
+
+## Where to get credentials
+
+- **TikTok:** create an app at <https://business-api.tiktok.com/> and complete
+  the TikTok for Business OAuth flow to get an access token.
+- **Google Ads:** developer token from Google Ads → Tools & Settings → API
+  Center (needs a manager/MCC account) + an OAuth client & refresh token.
+- **Pinterest:** create an app at <https://developers.pinterest.com/> with
+  `ads:read`, `ads:write`, `pins:read`, `pins:write` scopes and complete OAuth.
+
+Full per-platform details are in each server's own `README` / `.env.example`.
+
+## A note on "fully launching" an ad
+
+These servers cover the real campaign-building chain, but each platform has
+extra requirements (detailed targeting, billing/identity setup, creative specs,
+review/approval) before an ad serves. The tools accept pass-through `extra`
+fields so Claude can supply anything platform-specific that isn't a named
+parameter.

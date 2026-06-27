@@ -1,0 +1,18 @@
+{
+  "name": "pinterest-ads-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Standalone MCP server for managing Pinterest ad campaigns, ad groups, pins, and ads",
+  "bin": { "pinterest-ads-mcp": "src/index.js" },
+  "scripts": {
+    "start": "node src/index.js",
+    "start:http": "node src/index.js --http",
+    "check": "node src/index.js --check"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.23.8"
+  }
+}

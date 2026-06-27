@@ -1,7 +1,5 @@
-// Small fetch wrapper with consistent error handling.
-//
-// Throws an Error whose message includes the HTTP status and any response body,
-// so the MCP tool layer can relay something actionable to the user/model.
+// Small fetch wrapper with consistent error handling, shared shape across
+// all three ad MCP servers.
 
 export class ApiError extends Error {
   constructor(message, { status, body } = {}) {
