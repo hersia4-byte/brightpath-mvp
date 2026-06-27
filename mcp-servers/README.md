@@ -117,6 +117,24 @@ npm run check            # confirm credentials are detected
 npm run start:http       # HTTP mode (URL)   — or `npm start` for stdio
 ```
 
+## Getting your account token the easy way (one-click Connect)
+
+Each server has a built-in `/auth` helper so you don't have to do OAuth by hand:
+
+1. Create a developer app on the platform → get its **App ID** + **App secret**.
+2. In the app settings, register this **redirect URI**:
+   `https://<your-service>.onrender.com/auth/callback`
+3. In Render, set the app credentials on that service:
+   - TikTok: `TIKTOK_APP_ID`, `TIKTOK_APP_SECRET`
+   - Pinterest: `PINTEREST_APP_ID`, `PINTEREST_APP_SECRET`
+   - Google: `GOOGLE_ADS_CLIENT_ID`, `GOOGLE_ADS_CLIENT_SECRET`
+4. Open **`https://<your-service>.onrender.com/auth`** in a browser → click
+   **Allow** → the page shows the token(s) to copy.
+5. Paste those into the same service's Environment tab → **Save**. Done.
+
+(Google additionally needs an approved `GOOGLE_ADS_DEVELOPER_TOKEN` and your
+customer IDs — see its README.)
+
 ## Where to get credentials
 
 - **TikTok:** create an app at <https://business-api.tiktok.com/> and complete

@@ -32,6 +32,12 @@ services:
       # AND use a client that can send "Authorization: Bearer <value>".
       - key: MCP_AUTH_TOKEN
         sync: false
+      # For the one-click /auth Connect helper:
+      - key: TIKTOK_APP_ID
+        sync: false
+      - key: TIKTOK_APP_SECRET
+        sync: false
+      # Filled automatically when you complete /auth (or set by hand):
       - key: TIKTOK_ACCESS_TOKEN
         sync: false
       - key: TIKTOK_ADVERTISER_ID
@@ -84,6 +90,12 @@ services:
       # AND use a client that can send "Authorization: Bearer <value>".
       - key: MCP_AUTH_TOKEN
         sync: false
+      # For the one-click /auth Connect helper:
+      - key: PINTEREST_APP_ID
+        sync: false
+      - key: PINTEREST_APP_SECRET
+        sync: false
+      # Filled automatically when you complete /auth (or set by hand):
       - key: PINTEREST_ACCESS_TOKEN
         sync: false
       - key: PINTEREST_AD_ACCOUNT_ID

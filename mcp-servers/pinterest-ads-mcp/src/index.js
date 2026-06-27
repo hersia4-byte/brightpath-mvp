@@ -11,6 +11,7 @@
 import { ready, missingHint } from "./config.js";
 import { buildServer } from "./server.js";
 import { startStdio, startHttp } from "./transport.js";
+import { routes } from "./oauth.js";
 
 if (process.argv.includes("--check")) {
   console.log(JSON.stringify({ pinterest: ready ? "configured" : `NOT configured — ${missingHint}` }, null, 2));
@@ -24,6 +25,7 @@ if (useHttp) {
     port: Number(process.env.PORT) || 3003,
     path: process.env.MCP_PATH || "/mcp",
     authToken: process.env.MCP_AUTH_TOKEN,
+    routes,
   });
 } else {
   startStdio(buildServer).catch((err) => {
