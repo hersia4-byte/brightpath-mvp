@@ -11,13 +11,46 @@ function ensureReady() {
   if (!ready) throw new Error(`Pinterest is not configured. ${missingHint}`);
 }
 
-function api(path, { method = "GET", query, body } = {}) {
+// Token handling: prefer auto-refresh (refresh token + app creds) so the
+// access token never lapses; fall back to a static access token otherwise.
+let cachedToken = { value: undefined, expiresAt: 0 };
+
+async function getAccessToken() {
+  // If we can refresh, do so and cache until ~1 min before expiry.
+  if (config.refreshToken && config.appId && config.appSecret) {
+    if (cachedToken.value && Date.now() < cachedToken.expiresAt - 60_000) {
+      return cachedToken.value;
+    }
+    const basic = Buffer.from(`${config.appId}:${config.appSecret}`).toString("base64");
+    const res = await request(`${config.baseUrl}/oauth/token`, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${basic}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: config.refreshToken,
+      }).toString(),
+    });
+    cachedToken = {
+      value: res.access_token,
+      expiresAt: Date.now() + (res.expires_in ?? 3600) * 1000,
+    };
+    return cachedToken.value;
+  }
+  // Otherwise use the static access token (may expire — refresh is preferred).
+  return config.accessToken;
+}
+
+async function api(path, { method = "GET", query, body } = {}) {
   ensureReady();
+  const token = await getAccessToken();
   return request(`${config.baseUrl}${path}`, {
     method,
     query,
     body,
-    headers: { Authorization: `Bearer ${config.accessToken}` },
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
 

@@ -84,13 +84,18 @@ export const routes = [
       res.writeHead(200, { "Content-Type": "text/html" }).end(
         renderTokenPage({
           title: "Pinterest connected",
-          intro: "Copy these into your Render service's Environment tab, then Save.",
+          intro:
+            "Copy these into your Render service's Environment tab, then Save. " +
+            "Set PINTEREST_REFRESH_TOKEN (plus PINTEREST_APP_ID/SECRET, already set) so the " +
+            "token auto-refreshes and never expires.",
           fields: [
+            { key: "PINTEREST_REFRESH_TOKEN", value: tokenRes.refresh_token },
             { key: "PINTEREST_ACCESS_TOKEN", value: tokenRes.access_token },
             { key: "PINTEREST_AD_ACCOUNT_ID", value: adAccountId },
           ],
           nextSteps: [
-            "Render → this service → <b>Environment</b> → paste the values above → <b>Save</b>.",
+            "Render → this service → <b>Environment</b> → set <b>PINTEREST_REFRESH_TOKEN</b> to the value above → <b>Save</b>. (This is the important one — it keeps you logged in.)",
+            "You can also set PINTEREST_ACCESS_TOKEN, but with the refresh token the server mints fresh ones automatically.",
             "If PINTEREST_AD_ACCOUNT_ID is blank, ask Claude to <i>list my Pinterest ad accounts</i> and pick one.",
             "Wait ~1 min for the redeploy, then ask Claude: <i>list my Pinterest campaigns</i>.",
           ],
