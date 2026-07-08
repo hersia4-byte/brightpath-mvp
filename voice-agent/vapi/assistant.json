@@ -16,19 +16,36 @@
         "type": "function",
         "async": false,
         "function": {
+          "name": "checkAvailability",
+          "description": "Check which appointment slots are open on a given day. ALWAYS call this before offering or confirming any appointment time.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "day": { "type": "string", "description": "The day the caller asked about, as spoken: 'Thursday', 'tomorrow', 'July 16'" }
+            },
+            "required": ["day"]
+          }
+        },
+        "server": { "url": "https://YOUR-WEBHOOK-HOST/vapi/tools" }
+      },
+      {
+        "type": "function",
+        "async": false,
+        "function": {
           "name": "bookAppointment",
-          "description": "Book an appointment (tour, consultation, estimate, showing, etc.) for a caller. Only call after confirming all details back to the caller.",
+          "description": "Book an appointment (tour, consultation, estimate, showing, etc.) in a slot that checkAvailability showed as open. Only call after confirming all details back to the caller.",
           "parameters": {
             "type": "object",
             "properties": {
               "callerName": { "type": "string", "description": "Caller's full name" },
               "phone": { "type": "string", "description": "Callback phone number" },
               "appointmentType": { "type": "string", "description": "What is being booked, e.g. 'facility tour', 'estimate', 'showing'" },
-              "preferredTime": { "type": "string", "description": "Requested day and time, e.g. 'Thursday 10am'" },
+              "day": { "type": "string", "description": "The day, as spoken: 'Thursday', 'tomorrow', 'July 16'" },
+              "time": { "type": "string", "description": "The time, as spoken: '10am', '2:30 pm'" },
               "details": { "type": "string", "description": "Industry-specific fields collected per the system prompt (e.g. child's age, property address, reason for visit)" },
               "notes": { "type": "string", "description": "Anything else relevant" }
             },
-            "required": ["callerName", "phone", "appointmentType", "preferredTime"]
+            "required": ["callerName", "phone", "appointmentType", "day", "time"]
           }
         },
         "server": { "url": "https://YOUR-WEBHOOK-HOST/vapi/tools" }

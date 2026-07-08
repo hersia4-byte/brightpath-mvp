@@ -37,9 +37,14 @@ PLAYBOOK.md                                 (15-min call with the client)
 | `verticals/` | Niche packs: childcare, real-estate/property, dental/medical, home-services + `_template.md` for new industries |
 | `prompts/system-prompt.md` | Generic system prompt with `{{variables}}` + a `{{VERTICAL_KNOWLEDGE_BLOCK}}` slot |
 | `onboarding/client-intake-form.md` | Core intake questions; vertical packs add their own |
-| `vapi/assistant.json` | Vapi assistant config with generic `bookAppointment` / `takeMessage` / `transferCall` tools |
+| `vapi/assistant.json` | Vapi assistant config with `checkAvailability` / `bookAppointment` / `takeMessage` / `transferCall` tools |
 | `vapi/create-assistant.sh` | One-command create/update script |
 | `server/webhook.js` | Zero-dependency Node server handling tool calls and call reports |
+| `server/scheduler.js` + `server/config.json` | Booking engine: real availability checks, double-booking protection, confirmation IDs; per-client hours config |
+| `server/test.js` | 19 automated tests — run `node server/test.js` after any change |
+| `docs/INTEGRATIONS.md` | How the voice pipeline works, the 3-tier testing method, and Google Calendar / Cal.com / Twilio / CRM wiring |
+| `forms/intake-form.html` | Professional printable client intake form (client-facing) |
+| `forms/service-agreement.html` | Service contract template with AI disclosure, recording consent, data terms (attorney review before first use) |
 | `demo/index.html` | One sales page, all verticals — switch copy with `?vertical=childcare\|realestate\|dental\|homeservices` |
 
 ## Launch checklist (one weekend)

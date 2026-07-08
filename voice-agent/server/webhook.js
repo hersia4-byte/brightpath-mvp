@@ -1,20 +1,24 @@
-// Zero-dependency webhook server for the Vapi assistant.
-// Handles tool calls (bookAppointment, takeMessage) and end-of-call reports.
+// Webhook server for the Vapi assistant.
+// Handles tool calls (checkAvailability, bookAppointment, takeMessage) and
+// end-of-call reports. Booking logic lives in scheduler.js.
 //
 //   node webhook.js            # listens on :3100
 //   PORT=8080 node webhook.js
 //
-// Data lands in ./data/ as JSON lines — one file per type. Wire up real
-// notifications where marked TODO (email/SMS is what clients actually want).
+// Business hours/slots are configured in config.json. Bookings persist in
+// ./data/bookings.json; messages and call reports in ./data/*.jsonl.
+// Wire real notifications and calendars where marked TODO — see
+// docs/INTEGRATIONS.md for the Google Calendar / Cal.com / Twilio recipes.
 //
-// Deploy anywhere with a public HTTPS URL (Railway, Render, Fly, a VPS behind
-// Caddy), then set that URL in assistant.json (server.url and each tool's
+// Deploy anywhere with a public HTTPS URL (Railway, Render, Fly, a VPS),
+// then set that URL in assistant.json (server.url and each tool's
 // server.url), e.g. https://your-host/vapi/tools and /vapi/events.
 
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { checkAvailability, bookAppointment } from './scheduler.js';
 
 const PORT = process.env.PORT || 3100;
 const DATA_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'data');
@@ -25,26 +29,36 @@ function appendRecord(kind, record) {
   fs.appendFileSync(path.join(DATA_DIR, `${kind}.jsonl`), line);
 }
 
-// --- Tool implementations -------------------------------------------------
+// --- Tool implementations ---------------------------------------------------
+// Each returns a string: the instruction spoken context sent back to the LLM.
 
-function bookAppointment(args, callId) {
-  appendRecord('appointments', { callId, ...args });
-  // TODO: create a calendar event (Google Calendar API / Cal.com) and
-  // TODO: text the owner (Twilio) — this is the "wow" clients pay for.
-  console.log('APPOINTMENT BOOKED:', args);
-  return `${args.appointmentType || 'Appointment'} request recorded for ${args.callerName} at ${args.preferredTime}. Tell the caller they'll get a confirmation shortly.`;
-}
+const TOOLS = {
+  checkAvailability(args, callId) {
+    const result = checkAvailability(args);
+    appendRecord('availability-checks', { callId, args, result });
+    return result.speech;
+  },
 
-function takeMessage(args, callId) {
-  appendRecord('messages', { callId, ...args });
-  // TODO: forward to the client's email; SMS the owner for urgent categories.
-  console.log(`MESSAGE [${args.category}]:`, args);
-  return 'Message recorded. Tell the caller the team will follow up promptly.';
-}
+  bookAppointment(args, callId) {
+    const result = bookAppointment(args);
+    appendRecord('appointments', { callId, args, result });
+    if (result.booked) {
+      // TODO: push to the client's calendar (Google Calendar / Cal.com) and
+      // TODO: text the owner + the caller (Twilio) — see docs/INTEGRATIONS.md.
+      console.log(`APPOINTMENT ${result.confirmationId}:`, args.callerName, result.date, result.time);
+    }
+    return result.speech;
+  },
 
-const TOOLS = { bookAppointment, takeMessage };
+  takeMessage(args, callId) {
+    appendRecord('messages', { callId, ...args });
+    // TODO: forward to the client's email; SMS the owner for urgent categories.
+    console.log(`MESSAGE [${args.category}]:`, args);
+    return 'Message recorded. Tell the caller the team will follow up promptly.';
+  },
+};
 
-// --- HTTP plumbing ---------------------------------------------------------
+// --- HTTP plumbing -----------------------------------------------------------
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
@@ -58,7 +72,7 @@ function readBody(req) {
 const server = http.createServer(async (req, res) => {
   if (req.method !== 'POST') {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
-    return res.end('BrightPath Voice webhook is up.\n');
+    return res.end('Voice agent webhook is up.\n');
   }
 
   let payload;
@@ -81,9 +95,15 @@ const server = http.createServer(async (req, res) => {
       const rawArgs = tc.function?.arguments ?? tc.arguments ?? {};
       const args = typeof rawArgs === 'string' ? JSON.parse(rawArgs) : rawArgs;
       const impl = TOOLS[name];
-      const result = impl
-        ? impl(args, callId)
-        : `Unknown tool ${name} — take the caller's info as a message instead.`;
+      let result;
+      try {
+        result = impl
+          ? impl(args, callId)
+          : `Unknown tool ${name} — take the caller's info as a message instead.`;
+      } catch (err) {
+        console.error(`Tool ${name} failed:`, err);
+        result = 'Something went wrong on our end — take the caller\'s name and number as a message instead.';
+      }
       return { toolCallId: tc.id, result };
     });
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -109,7 +129,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`BrightPath Voice webhook listening on :${PORT}`);
+  console.log(`Voice agent webhook listening on :${PORT}`);
   console.log(`Tool calls  -> POST /vapi/tools`);
   console.log(`Call events -> POST /vapi/events`);
   console.log(`Data dir    -> ${DATA_DIR}`);
