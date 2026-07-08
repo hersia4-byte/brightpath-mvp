@@ -1,6 +1,6 @@
 {
-  "name": "Sunny — {{CENTER_NAME}} Receptionist",
-  "firstMessage": "Thanks for calling {{CENTER_NAME}}! This is Sunny, the center's virtual assistant. How can I help you today?",
+  "name": "{{AGENT_NAME}} — {{BUSINESS_NAME}} Receptionist",
+  "firstMessage": "Thanks for calling {{BUSINESS_NAME}}! This is {{AGENT_NAME}}, the {{BUSINESS_TYPE_SHORT}}'s virtual assistant. How can I help you today?",
   "model": {
     "provider": "openai",
     "model": "gpt-4o",
@@ -16,18 +16,19 @@
         "type": "function",
         "async": false,
         "function": {
-          "name": "bookTour",
-          "description": "Book a facility tour for a prospective parent. Only call after confirming all details back to the caller.",
+          "name": "bookAppointment",
+          "description": "Book an appointment (tour, consultation, estimate, showing, etc.) for a caller. Only call after confirming all details back to the caller.",
           "parameters": {
             "type": "object",
             "properties": {
-              "parentName": { "type": "string", "description": "Parent's full name" },
+              "callerName": { "type": "string", "description": "Caller's full name" },
               "phone": { "type": "string", "description": "Callback phone number" },
-              "childAge": { "type": "string", "description": "Child's age, e.g. '2 years'" },
-              "preferredTime": { "type": "string", "description": "Requested tour day and time, e.g. 'Thursday 10am'" },
-              "notes": { "type": "string", "description": "Anything else relevant (sibling, start date, program interest)" }
+              "appointmentType": { "type": "string", "description": "What is being booked, e.g. 'facility tour', 'estimate', 'showing'" },
+              "preferredTime": { "type": "string", "description": "Requested day and time, e.g. 'Thursday 10am'" },
+              "details": { "type": "string", "description": "Industry-specific fields collected per the system prompt (e.g. child's age, property address, reason for visit)" },
+              "notes": { "type": "string", "description": "Anything else relevant" }
             },
-            "required": ["parentName", "phone", "childAge", "preferredTime"]
+            "required": ["callerName", "phone", "appointmentType", "preferredTime"]
           }
         },
         "server": { "url": "https://YOUR-WEBHOOK-HOST/vapi/tools" }
@@ -37,17 +38,15 @@
         "async": false,
         "function": {
           "name": "takeMessage",
-          "description": "Record a message for center staff: absences, late pickups, callback requests, or anything the assistant cannot answer.",
+          "description": "Record a message for staff: callback requests or anything the assistant cannot answer or handle.",
           "parameters": {
             "type": "object",
             "properties": {
               "callerName": { "type": "string", "description": "Caller's name" },
               "phone": { "type": "string", "description": "Callback phone number" },
-              "childName": { "type": "string", "description": "Child's name if relevant" },
               "category": {
                 "type": "string",
-                "enum": ["absence", "late_pickup", "callback", "general"],
-                "description": "Message category"
+                "description": "Message category — use one of the categories defined in the system prompt for this business, or 'general'"
               },
               "message": { "type": "string", "description": "The message content" }
             },
@@ -90,7 +89,7 @@
       "messages": [
         {
           "role": "system",
-          "content": "Summarize this childcare center call in 2-3 sentences for the director: who called, what they wanted, what was done (tour booked / message taken / question answered), and any follow-up needed."
+          "content": "Summarize this call in 2-3 sentences for the business owner: who called, what they wanted, what was done (appointment booked / message taken / question answered), and any follow-up needed."
         }
       ]
     },
@@ -100,7 +99,7 @@
       "messages": [
         {
           "role": "system",
-          "content": "Pass if the caller's need was fully handled (question answered from approved info, tour booked, message taken, or emergency escalated). Fail if the assistant guessed at unapproved information, left the caller's need unaddressed, or the caller hung up frustrated."
+          "content": "Pass if the caller's need was fully handled (question answered from approved info, appointment booked, message taken, or emergency escalated). Fail if the assistant guessed at unapproved information, left the caller's need unaddressed, or the caller hung up frustrated."
         }
       ]
     }

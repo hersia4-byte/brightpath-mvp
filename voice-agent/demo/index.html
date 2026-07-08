@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BrightPath Voice — Your center's phone, answered every time</title>
+<title>Your phone, answered every time — AI Receptionist</title>
 <style>
   :root {
     --ink: #1f2937; --muted: #6b7280; --brand: #0e7490; --brand-dark: #155e75;
@@ -14,7 +14,6 @@
          color: var(--ink); background: var(--bg); line-height: 1.6; }
   .wrap { max-width: 720px; margin: 0 auto; padding: 0 24px; }
   header { background: linear-gradient(160deg, var(--brand-dark), var(--brand)); color: #fff; padding: 64px 0 56px; }
-  header .wrap { max-width: 720px; }
   .kicker { text-transform: uppercase; letter-spacing: .12em; font-size: 13px; opacity: .85; margin-bottom: 12px; }
   h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.15; margin-bottom: 16px; }
   .sub { font-size: 18px; opacity: .92; max-width: 54ch; }
@@ -55,13 +54,10 @@
 
 <header>
   <div class="wrap">
-    <div class="kicker">BrightPath Voice · AI Receptionist for Childcare Centers</div>
-    <h1>It's 5:20pm. Your phone is ringing. Nobody can answer it.</h1>
-    <p class="sub">That caller is a parent choosing a daycare — and if they get voicemail,
-      they call the next center on their list. BrightPath Voice answers every call,
-      answers parents' questions with <em>your</em> information, and books tours straight
-      onto your calendar. 24/7.</p>
-    <a class="cta" href="tel:+10000000000">📞 Call the live demo: (000) 000-0000</a>
+    <div class="kicker" data-t="kicker"></div>
+    <h1 data-t="headline"></h1>
+    <p class="sub" data-t="subhead"></p>
+    <a class="cta" id="cta-call">📞 Call the live demo: <span data-t="demoNumber"></span></a>
   </div>
 </header>
 
@@ -69,11 +65,11 @@
   <div class="wrap">
     <h2>What it does on every call</h2>
     <ul class="checks">
-      <li><b>Answers instantly, any hour.</b> Pickup rush, nap time, weekends — no more voicemail.</li>
-      <li><b>Answers enrollment questions</b> — hours, programs, tuition, openings — using only information you approve.</li>
-      <li><b>Books tours</b> for interested parents and confirms every detail back before saving.</li>
-      <li><b>Takes structured messages</b> — absences, late pickups, callbacks — and texts you a summary.</li>
-      <li><b>Escalates real emergencies</b> to your staff immediately. It never guesses about safety, health, or a specific child.</li>
+      <li><b>Answers instantly, any hour.</b> <span data-t="busyMoment"></span> — no more voicemail.</li>
+      <li><b>Answers your customers' questions</b> — hours, services, pricing, availability — using only information you approve.</li>
+      <li><b data-t="bookingBullet"></b> and confirms every detail back before saving.</li>
+      <li><b>Takes structured messages</b> — <span data-t="messageTypes"></span> — and texts you a summary.</li>
+      <li><b>Escalates real emergencies</b> to your team immediately. It never guesses about anything you haven't approved.</li>
     </ul>
   </div>
 </section>
@@ -81,13 +77,11 @@
 <section class="alt">
   <div class="wrap">
     <h2>The math is simple</h2>
-    <p>One enrollment is worth <b>$10,000–$20,000 a year</b> to your center. If answering
-       every call converts just one extra missed caller into a tour per quarter, the
-       service pays for itself many times over.</p>
+    <p data-t="mathLine"></p>
     <div class="stat-row">
-      <div class="stat"><b>~35%</b><span>of daytime calls to small centers go unanswered</span></div>
+      <div class="stat"><b data-t="stat1b"></b><span data-t="stat1s"></span></div>
       <div class="stat"><b>24/7</b><span>coverage — nights, weekends, holidays</span></div>
-      <div class="stat"><b>&lt; $17/day</b><span>vs. $1,400+/mo for part-time front desk help</span></div>
+      <div class="stat"><b data-t="stat3b"></b><span data-t="stat3s"></span></div>
     </div>
   </div>
 </section>
@@ -96,9 +90,9 @@
   <div class="wrap">
     <h2>Hear it yourself — try to stump it</h2>
     <div class="demo-box">
-      <p class="muted">Call the demo line and ask it what a parent would ask you:</p>
-      <div class="num">(000) 000-0000</div>
-      <p class="muted" style="margin-top:8px">"What are your infant ratios?" · "How much is tuition?" · "Can I book a tour?"</p>
+      <p class="muted">Call the demo line and ask it what a customer would ask you:</p>
+      <div class="num" data-t="demoNumber"></div>
+      <p class="muted" style="margin-top:8px" data-t="sampleQuestions"></p>
     </div>
   </div>
 </section>
@@ -107,13 +101,13 @@
   <div class="wrap">
     <h2>Setup takes 15 minutes of your time</h2>
     <ol class="steps">
-      <li><b>One short call.</b> You tell us your hours, programs, tuition, and policies. That's your whole job.</li>
-      <li><b>We build your receptionist.</b> Your greeting, your answers, your tour schedule — nothing generic.</li>
+      <li><b>One short call.</b> You tell us your hours, services, prices, and policies. That's your whole job.</li>
+      <li><b>We build your receptionist.</b> Your greeting, your answers, your schedule — nothing generic.</li>
       <li><b>Your phone forwards on no-answer.</b> Your team still answers first; the assistant only catches calls that would have hit voicemail.</li>
-      <li><b>You get a summary of every call.</b> Tours booked, messages taken, questions asked — in your inbox every week.</li>
+      <li><b>You get a summary of every call.</b> <span data-t="summaryLine"></span> — in your inbox every week.</li>
     </ol>
     <div class="guarantee">
-      <b>14-day free trial.</b> If it doesn't book at least one tour, cancel and pay nothing.
+      <b>14-day free trial.</b> <span data-t="guaranteeLine"></span>
       Month-to-month after that — no contracts.
     </div>
   </div>
@@ -122,23 +116,114 @@
 <section>
   <div class="wrap">
     <h2>Plans</h2>
-    <ul class="checks">
-      <li><b>After-Hours — $297/mo.</b> Answers when you're closed and on missed calls.</li>
-      <li><b>Full Reception — $497/mo.</b> 24/7 answering, tour booking, messages, weekly summary. <i>Most popular.</i></li>
-      <li><b>Multi-Site — $997/mo.</b> Up to 3 locations, monthly FAQ updates, priority support.</li>
-    </ul>
+    <ul class="checks" id="plans"></ul>
     <p class="muted" style="margin-top:12px">One-time $297 setup — waived for founding clients this month.</p>
-    <a class="cta" style="margin-top:20px" href="mailto:hello@example.com?subject=BrightPath%20Voice%20trial">Start my free trial</a>
+    <a class="cta" style="margin-top:20px" id="cta-email">Start my free trial</a>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <p>BrightPath Voice · Calls may be recorded for quality and follow-up. The assistant identifies
-       itself as an AI, never shares information about individual children, and transfers urgent
-       matters to your staff. Replace the demo number, email, and pricing above with your own.</p>
+    <p>Calls may be recorded for quality and follow-up. The assistant identifies itself as an AI,
+       <span data-t="privacyLine"></span> and transfers urgent matters to your team.
+       <i>To customize: edit the PRESETS object in this file, or open with ?vertical=childcare|realestate|dental|homeservices.</i></p>
   </div>
 </footer>
+
+<script>
+// ---------------------------------------------------------------------------
+// CUSTOMIZE HERE. Pick a preset via ?vertical=... or set DEFAULT_VERTICAL.
+// For a new industry, copy a preset and adjust ~15 strings (see verticals/_template.md).
+// Replace demoNumber and email everywhere before sending to a prospect.
+// ---------------------------------------------------------------------------
+const DEFAULT_VERTICAL = 'childcare';
+
+const SHARED = {
+  demoNumber: '(000) 000-0000',
+  email: 'hello@example.com',
+  plans: [
+    '<b>After-Hours — $297/mo.</b> Answers when you’re closed and on missed calls.',
+    '<b>Full Reception — $497/mo.</b> 24/7 answering, appointment booking, messages, weekly summary. <i>Most popular.</i>',
+    '<b>Multi-Site — $997/mo.</b> Multiple locations, monthly updates, priority support.',
+  ],
+};
+
+const PRESETS = {
+  childcare: {
+    kicker: 'AI Receptionist for Childcare Centers',
+    headline: 'It’s 5:20pm. Your phone is ringing. Nobody can answer it.',
+    subhead: 'That caller is a parent choosing a daycare — and if they get voicemail, they call the next center on their list. Every call answered, every question handled with your information, tours booked straight onto your calendar. 24/7.',
+    busyMoment: 'Pickup rush, nap time, weekends',
+    bookingBullet: 'Books tours for interested parents',
+    messageTypes: 'absences, late pickups, callbacks',
+    mathLine: 'One enrollment is worth <b>$10,000–$20,000 a year</b> to your center. If answering every call converts one extra missed caller into a tour per quarter, the service pays for itself many times over.',
+    stat1b: '~35%', stat1s: 'of daytime calls to small centers go unanswered',
+    stat3b: '< $17/day', stat3s: 'vs. $1,400+/mo for part-time front desk help',
+    sampleQuestions: '“What are your infant ratios?” · “How much is tuition?” · “Can I book a tour?”',
+    summaryLine: 'Tours booked, messages taken, questions asked',
+    guaranteeLine: 'If it doesn’t book at least one tour, cancel and pay nothing.',
+    privacyLine: 'never shares information about individual children,',
+  },
+  realestate: {
+    kicker: 'AI Receptionist for Realtors & Property Managers',
+    headline: 'You’re mid-showing. A buyer is calling. They won’t leave a voicemail.',
+    subhead: 'Speed-to-lead decides who gets the client. Every call answered, listing questions handled with your information, showings booked straight onto your calendar — while you’re still in the showing.',
+    busyMoment: 'Showings, open houses, evenings',
+    bookingBullet: 'Books showings for interested buyers and renters',
+    messageTypes: 'maintenance requests, listing inquiries, callbacks',
+    mathLine: 'One closed buyer is worth <b>$8,000–$12,000 in commission</b>. One answered call that your competitor’s voicemail missed pays for years of service.',
+    stat1b: '5 min', stat1s: 'lead response window before buyers call the next agent',
+    stat3b: '< $17/day', stat3s: 'vs. losing one lead a week to voicemail',
+    sampleQuestions: '“Is the house on Elm still available?” · “What’s the pet policy?” · “Can I see it Saturday?”',
+    summaryLine: 'Showings booked, maintenance triaged, leads captured',
+    guaranteeLine: 'If it doesn’t book at least one showing, cancel and pay nothing.',
+    privacyLine: 'never shares tenant or client information,',
+  },
+  dental: {
+    kicker: 'AI Receptionist for Dental Practices',
+    headline: 'Your front desk is with a patient. A new patient is calling. It rings out.',
+    subhead: 'Every call answered, scheduling handled, insurance questions answered with your approved information — without pulling your team away from the patients in front of them.',
+    busyMoment: 'Morning check-in rush, lunch, after close',
+    bookingBullet: 'Schedules appointments for new and existing patients',
+    messageTypes: 'reschedules, billing questions, refill requests',
+    mathLine: 'A new patient is worth <b>$700–$1,500 a year</b> — far more with treatment plans. And this costs less than a third of a typical answering service that only takes messages.',
+    stat1b: '32%', stat1s: 'of calls to dental offices go unanswered during business hours',
+    stat3b: '< $20/day', stat3s: 'vs. $2,000+/mo answering services that just take messages',
+    sampleQuestions: '“Do you take Delta Dental?” · “How much is a cleaning?” · “Can I come in Thursday?”',
+    summaryLine: 'Appointments requested, reschedules, messages',
+    guaranteeLine: 'If it doesn’t book at least one appointment, cancel and pay nothing.',
+    privacyLine: 'never discusses patient information,',
+  },
+  homeservices: {
+    kicker: 'AI Receptionist for Home Service Pros',
+    headline: 'You’re under a sink. Your phone is ringing. That’s a $600 job calling.',
+    subhead: 'Homeowners call down the list until someone answers. Every call answered, urgency triaged, service calls booked with the address and issue captured — while your hands are full.',
+    busyMoment: 'On the job, driving, after hours',
+    bookingBullet: 'Books service calls and estimates',
+    messageTypes: 'quote requests, reschedules, invoice questions',
+    mathLine: 'Your average ticket is <b>$300–$800</b> — emergency jobs and installs run into five figures. One recovered job a month pays the subscription several times over.',
+    stat1b: '62%', stat1s: 'of calls to home-service businesses go to voicemail',
+    stat3b: '1 job/mo', stat3s: 'recovered covers the entire cost of the service',
+    sampleQuestions: '“Do you do water heaters?” · “What’s your trip fee?” · “Can someone come today?”',
+    summaryLine: 'Jobs booked, emergencies flagged, quotes requested',
+    guaranteeLine: 'If it doesn’t book at least one job, cancel and pay nothing.',
+    privacyLine: 'never quotes firm prices sight-unseen,',
+  },
+};
+
+const key = new URLSearchParams(location.search).get('vertical') || DEFAULT_VERTICAL;
+const cfg = { ...SHARED, ...(PRESETS[key] || PRESETS[DEFAULT_VERTICAL]) };
+
+document.querySelectorAll('[data-t]').forEach((el) => {
+  const v = cfg[el.dataset.t];
+  if (v !== undefined) el.innerHTML = v;
+});
+document.getElementById('plans').innerHTML = cfg.plans.map((p) => `<li>${p}</li>`).join('');
+document.getElementById('cta-call').href = 'tel:' + cfg.demoNumber.replace(/\D/g, '');
+document.getElementById('cta-email').href =
+  `mailto:${cfg.email}?subject=${encodeURIComponent('AI Receptionist free trial')}`;
+document.title = cfg.kicker + ' — answered every time';
+</script>
 
 </body>
 </html>

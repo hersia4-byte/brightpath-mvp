@@ -1,5 +1,5 @@
 // Zero-dependency webhook server for the Vapi assistant.
-// Handles tool calls (bookTour, takeMessage) and end-of-call reports.
+// Handles tool calls (bookAppointment, takeMessage) and end-of-call reports.
 //
 //   node webhook.js            # listens on :3100
 //   PORT=8080 node webhook.js
@@ -27,23 +27,22 @@ function appendRecord(kind, record) {
 
 // --- Tool implementations -------------------------------------------------
 
-function bookTour(args, callId) {
-  appendRecord('tours', { callId, ...args });
+function bookAppointment(args, callId) {
+  appendRecord('appointments', { callId, ...args });
   // TODO: create a calendar event (Google Calendar API / Cal.com) and
-  // TODO: text the director (Twilio) — this is the "wow" clients pay for.
-  console.log('TOUR BOOKED:', args);
-  return `Tour request recorded for ${args.parentName} at ${args.preferredTime}. Tell the caller they'll get a confirmation text shortly.`;
+  // TODO: text the owner (Twilio) — this is the "wow" clients pay for.
+  console.log('APPOINTMENT BOOKED:', args);
+  return `${args.appointmentType || 'Appointment'} request recorded for ${args.callerName} at ${args.preferredTime}. Tell the caller they'll get a confirmation shortly.`;
 }
 
 function takeMessage(args, callId) {
   appendRecord('messages', { callId, ...args });
-  // TODO: forward to the center's email; SMS the director if category is
-  // late_pickup or the message sounds urgent.
+  // TODO: forward to the client's email; SMS the owner for urgent categories.
   console.log(`MESSAGE [${args.category}]:`, args);
   return 'Message recorded. Tell the caller the team will follow up promptly.';
 }
 
-const TOOLS = { bookTour, takeMessage };
+const TOOLS = { bookAppointment, takeMessage };
 
 // --- HTTP plumbing ---------------------------------------------------------
 
