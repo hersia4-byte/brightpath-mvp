@@ -1,0 +1,108 @@
+{
+  "name": "Sunny — {{CENTER_NAME}} Receptionist",
+  "firstMessage": "Thanks for calling {{CENTER_NAME}}! This is Sunny, the center's virtual assistant. How can I help you today?",
+  "model": {
+    "provider": "openai",
+    "model": "gpt-4o",
+    "temperature": 0.4,
+    "messages": [
+      {
+        "role": "system",
+        "content": "PASTE_RENDERED_SYSTEM_PROMPT_HERE — render prompts/system-prompt.md with the client's intake answers and paste the full text as this string."
+      }
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "async": false,
+        "function": {
+          "name": "bookTour",
+          "description": "Book a facility tour for a prospective parent. Only call after confirming all details back to the caller.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "parentName": { "type": "string", "description": "Parent's full name" },
+              "phone": { "type": "string", "description": "Callback phone number" },
+              "childAge": { "type": "string", "description": "Child's age, e.g. '2 years'" },
+              "preferredTime": { "type": "string", "description": "Requested tour day and time, e.g. 'Thursday 10am'" },
+              "notes": { "type": "string", "description": "Anything else relevant (sibling, start date, program interest)" }
+            },
+            "required": ["parentName", "phone", "childAge", "preferredTime"]
+          }
+        },
+        "server": { "url": "https://YOUR-WEBHOOK-HOST/vapi/tools" }
+      },
+      {
+        "type": "function",
+        "async": false,
+        "function": {
+          "name": "takeMessage",
+          "description": "Record a message for center staff: absences, late pickups, callback requests, or anything the assistant cannot answer.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "callerName": { "type": "string", "description": "Caller's name" },
+              "phone": { "type": "string", "description": "Callback phone number" },
+              "childName": { "type": "string", "description": "Child's name if relevant" },
+              "category": {
+                "type": "string",
+                "enum": ["absence", "late_pickup", "callback", "general"],
+                "description": "Message category"
+              },
+              "message": { "type": "string", "description": "The message content" }
+            },
+            "required": ["callerName", "category", "message"]
+          }
+        },
+        "server": { "url": "https://YOUR-WEBHOOK-HOST/vapi/tools" }
+      },
+      {
+        "type": "transferCall",
+        "destinations": [
+          {
+            "type": "number",
+            "number": "+1XXXXXXXXXX",
+            "message": "I'm connecting you to our staff right away, please hold."
+          }
+        ]
+      }
+    ]
+  },
+  "voice": {
+    "provider": "11labs",
+    "voiceId": "sarah"
+  },
+  "transcriber": {
+    "provider": "deepgram",
+    "model": "nova-3",
+    "language": "en"
+  },
+  "server": { "url": "https://YOUR-WEBHOOK-HOST/vapi/events" },
+  "serverMessages": ["end-of-call-report", "tool-calls"],
+  "endCallMessage": "Thanks so much for calling — have a wonderful day!",
+  "endCallPhrases": ["goodbye", "bye bye", "talk to you later"],
+  "silenceTimeoutSeconds": 20,
+  "maxDurationSeconds": 900,
+  "backgroundSound": "office",
+  "analysisPlan": {
+    "summaryPlan": {
+      "enabled": true,
+      "messages": [
+        {
+          "role": "system",
+          "content": "Summarize this childcare center call in 2-3 sentences for the director: who called, what they wanted, what was done (tour booked / message taken / question answered), and any follow-up needed."
+        }
+      ]
+    },
+    "successEvaluationPlan": {
+      "enabled": true,
+      "rubric": "PassFail",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Pass if the caller's need was fully handled (question answered from approved info, tour booked, message taken, or emergency escalated). Fail if the assistant guessed at unapproved information, left the caller's need unaddressed, or the caller hung up frustrated."
+        }
+      ]
+    }
+  }
+}
