@@ -43,6 +43,7 @@ PLAYBOOK.md                                 (15-min call with the client)
 | `server/scheduler.js` + `server/config.json` | Booking engine: real availability checks, double-booking protection, confirmation IDs; per-client hours config |
 | `server/test.js` | 19 automated tests — run `node server/test.js` after any change |
 | `docs/INTEGRATIONS.md` | How the voice pipeline works, the 3-tier testing method, and Google Calendar / Cal.com / Twilio / CRM wiring |
+| `docs/REMOTE-ONBOARDING.md` | Signed → live in 3 days, fully online: e-sign, screen-share intake, forwarding codes, go-live call script |
 | `forms/intake-form.html` | Professional printable client intake form (client-facing) |
 | `forms/service-agreement.html` | Service contract template with AI disclosure, recording consent, data terms (attorney review before first use) |
 | `demo/index.html` | One sales page, all verticals — switch copy with `?vertical=childcare\|realestate\|dental\|homeservices` |
