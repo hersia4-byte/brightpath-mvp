@@ -19,6 +19,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { checkAvailability, bookAppointment } from './scheduler.js';
+import { renderReport } from './report.js';
 
 const PORT = process.env.PORT || 3100;
 const DATA_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'data');
@@ -71,8 +72,12 @@ function readBody(req) {
 
 const server = http.createServer(async (req, res) => {
   if (req.method !== 'POST') {
+    if (req.url.startsWith('/report')) {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      return res.end(renderReport(process.env.BUSINESS_NAME || 'Demo Business'));
+    }
     res.writeHead(200, { 'Content-Type': 'text/plain' });
-    return res.end('Voice agent webhook is up.\n');
+    return res.end('Voice agent webhook is up. Review dashboard: GET /report\n');
   }
 
   let payload;
